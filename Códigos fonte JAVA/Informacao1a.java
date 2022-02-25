@@ -1,0 +1,84 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.pucpr.operacoescomerciais;
+
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+/**
+ *
+ * @author gabriela.gondo
+ * Transações comerciais por país
+ */
+public class Informacao1a {
+    
+    //Mapper<Object, FORMATO_ENTRADA, FORMATO_CHAVE, FORMATO_VALOR>
+    public static class MapperImplementacao1 extends Mapper<Object, Text, Text, IntWritable>{
+        @Override
+        public void map(Object chave, Text valor, Context context) throws IOException, InterruptedException{
+            String linha = valor.toString();
+            String [] campos = linha.split(";");
+            
+            if(campos.length == 10){
+                int ocorrencias = 1;
+                String pais = campos[0];
+                context.write(new Text(pais), new IntWritable(ocorrencias));
+            }
+
+        }
+    }
+  
+
+    //Reducer<FORMATO_CHAVE_IN, FORMATO_VALOR_IN, FORMATO_CHAVE_OUT, FORMATO_VALOR_OUT>
+    public static class ReducerImplementacao1 extends Reducer<Text, IntWritable, Text, IntWritable>{
+        @Override
+        public void reduce(Text chave, Iterable<IntWritable> valores, Context context) throws IOException, InterruptedException{
+            int soma = 0;
+            for(IntWritable val : valores){
+                soma += val.get();
+            }
+            context.write(chave, new IntWritable(soma));
+        }
+
+    }
+    
+    public static void main(String[] args) throws IOException, InterruptedException, ClassNotFoundException{
+        
+        String arquivoEntrada = "/home/Disciplinas/FundamentosBigData/OperacoesComerciais/base_100_mil.csv";
+        String arquivoSaida = "/home2/ead2021/SEM1/gabriela.gondo/Desktop/ImplementacaoLocalMR/OperacoesComerciais/Informacao1/TransacoesComerciaisPorPais";
+        
+        //Caso seja passado arquivos externamente, reescrevendo o valor das variáveis
+        //Caso contrário, será feito teste local
+        if(args.length == 2){
+            arquivoEntrada = args[0];
+            arquivoSaida = args[1];
+        }
+        
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "atividade1");
+        
+        job.setJarByClass(Informacao1a.class);
+        job.setMapperClass(MapperImplementacao1.class); //Indicando a classe Mapper
+        job.setReducerClass(ReducerImplementacao1.class); //Indicando a classe Reducer
+        job.setOutputKeyClass(Text.class); //Formato de saída da chave
+        job.setOutputValueClass(IntWritable.class); //Formato de saída do valor
+        
+        //Arquivo de entrada e saída
+        FileInputFormat.addInputPath(job, new Path(arquivoEntrada));
+        FileOutputFormat.setOutputPath(job, new Path(arquivoSaida));
+        
+        //Submetendo a tarefa ao MapReduce
+        job.waitForCompletion(true);
+    }
+}
