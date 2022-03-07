@@ -1,5 +1,5 @@
 # ComercialOperationsBigData
-Uso do framework Hadoop em Java para análise de dados em grandes arquivos não-estruturados de operações comerciais armazenados em HDFS.
+Uso do framework Hadoop e ferramenta MapReduce em Java para análise de dados em grandes arquivos não-estruturados de operações comerciais armazenados em HDFS.
 O programa gera arquivos de texto contendo:
 
 1. País com a maior quantidade de transações comerciais efetuadas
