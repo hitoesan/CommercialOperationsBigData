@@ -1,4 +1,18 @@
 # ComercialOperationsBigData
+
+Uses the Hadoop framework and the MapReduce tool in Java for data analysis on large unstructured files of commercial operations stored in HDFS. The program generates text files containing:
+
+1. Country with the highest number of commercial transactions
+2. Commodity with the highest number of commercial transactions in Brazil
+3. Number of commercial transactions per year
+4. Commodity with the highest number of financial transactions
+5. Commodity with the highest number of financial transactions in 2016
+6. Commodity with the highest number of financial transactions in 2016, in Brazil
+7. Commodity with the highest total weight across all commercial transactions
+8. Commodity with the highest total weight across all commercial transactions, broken down by year
+
+--------------------------------------------------------------------------------
+
 Uso do framework Hadoop e ferramenta MapReduce em Java para análise de dados em grandes arquivos não-estruturados de operações comerciais armazenados em HDFS.
 O programa gera arquivos de texto contendo:
 
